@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Cart extends Model
 {
     use HasFactory;
+    // $guarded fungsinya buat proteksi ke field id di table agar gabisa diisi secara langsung, tapi field lainnya boleh
+
+    protected $guarded = [
+        'id'
+    ];
 }

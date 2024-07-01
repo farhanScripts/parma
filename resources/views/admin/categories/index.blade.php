@@ -16,11 +16,12 @@
         @forelse ($categories as $category )
         <div class="item-card flex p-3 flex-row justify-between items-center">
           <img src="{{ Storage::url($category->icon) }}" alt="{{ $category->name }}" class="w-[50px] h-[50px]">
-          <h3 class="font-bold text-xl font-bold text-indigo-950">
+          <h3 class="font-bold text-xl text-indigo-950">
             {{ $category->name }}
           </h3>
           <div class="flex flex-row gap-x-3 items-center">
-            <a href="#" class="font-bold py-3 px-5 rounded-full text-white bg-indigo-700">Edit</a>
+            <a href="{{ route('admin.categories.edit', $category) }}"
+              class="font-bold py-3 px-5 rounded-full text-white bg-indigo-700">Edit</a>
             <form method="POST" action="{{ route('admin.categories.destroy', $category) }}">
               @csrf
               @method('DELETE')

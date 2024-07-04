@@ -16,7 +16,12 @@ class CartController extends Controller
      */
     public function index()
     {
-        return view('front.cart');
+        // dapetin data user yang sedang login
+        $user = Auth::user();
+        $my_carts = $user->carts()->with('product')->get();
+        return view('front.cart', [
+            'my_carts' => $my_carts
+        ]);
     }
 
     /**
@@ -97,6 +102,20 @@ class CartController extends Controller
      */
     public function destroy(Cart $cart)
     {
-        //
+        try {
+            // hapus data kategori yang dipilih dengan metode hard delete
+            $cart->delete();
+            // balik ke halaman index category
+            return redirect()->back();
+        } catch (\Exception $e) {
+            // perintah ke database kalau ada data yang ga lengkap atau cacat di rollback (jangan disimpan datanya)
+            DB::rollBack();
+            // trus kasih message ke user kalau datanya error (ada yang ga lengkap)
+            $error = ValidationException::withMessages([
+                'system_error' => ['System Error!' . $e->getMessage()]
+            ]);
+
+            throw $error;
+        }
     }
 }

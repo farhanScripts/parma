@@ -12,7 +12,7 @@
 <body>
   <!-- Topbar -->
   <section class="relative flex items-center justify-between w-full gap-5 wrapper">
-    <a href="./index.html" class="p-2 bg-white rounded-full">
+    <a href="{{ route('front.index') }}" class="p-2 bg-white rounded-full">
       <img src="{{asset('assets/svgs/ic-arrow-left.svg')}}" class="size-5" alt="">
     </a>
     <p class="absolute text-base font-semibold translate-x-1/2 -translate-y-1/2 top-1/2 right-1/2">
@@ -32,42 +32,33 @@
       </button>
     </div>
     <div class="flex flex-col gap-4" id="itemsList">
+      @forelse ($my_carts as $cart)
+      <div class="py-3.5 pl-4 pr-[22px] bg-white rounded-2xl flex gap-1 items-center relative">
+        <img src="{{ Storage::url($cart->product->photo) }}" class="w-full max-w-[70px] max-h-[70px] object-contain"
+          alt="">
+        <div class="flex flex-wrap items-center justify-between w-full gap-1">
+          <div class="flex flex-col gap-1">
+            <h3 class="text-base font-semibold whitespace-nowrap w-[150px] truncate">
+              {{ $cart->product->name }}
+            </h3>
+            <p class="text-sm text-grey product-price" data-price="{{ $cart->product->price }}">
+              Rp {{ $cart->product->price }}
+            </p>
+          </div>
+          <form action="{{ route('carts.destroy', $cart) }}" method="POST">
+            @csrf
+            @method('DELETE')
+            <button type="submit">
+              <img src="{{asset('assets/svgs/ic-trash-can-filled.svg')}}" class="size-[30px]" alt="">
+            </button>
+          </form>
+        </div>
+      </div>
+      @empty
+
+      @endforelse
       <!-- Softovac Rami -->
-      <div class="py-3.5 pl-4 pr-[22px] bg-white rounded-2xl flex gap-1 items-center relative">
-        <img src="{{asset('assets/images/product-2.webp')}}" class="w-full max-w-[70px] max-h-[70px] object-contain"
-          alt="">
-        <div class="flex flex-wrap items-center justify-between w-full gap-1">
-          <div class="flex flex-col gap-1">
-            <a href="details.html" class="text-base font-semibold stretched-link whitespace-nowrap w-[150px] truncate">
-              Softovac Rami
-            </a>
-            <p class="text-sm text-grey">
-              Rp 290.000
-            </p>
-          </div>
-          <button type="button">
-            <img src="{{asset('assets/svgs/ic-trash-can-filled.svg')}}" class="size-[30px]" alt="">
-          </button>
-        </div>
-      </div>
-      <!-- Softovac Bora -->
-      <div class="py-3.5 pl-4 pr-[22px] bg-white rounded-2xl flex gap-1 items-center relative">
-        <img src="{{asset('assets/images/product-4.webp')}}" class="w-full max-w-[70px] max-h-[70px] object-contain"
-          alt="">
-        <div class="flex flex-wrap items-center justify-between w-full gap-1">
-          <div class="flex flex-col gap-1">
-            <a href="details.html" class="text-base font-semibold stretched-link whitespace-nowrap w-[150px] truncate">
-              Softovac Bora
-            </a>
-            <p class="text-sm text-grey">
-              Rp 899.000
-            </p>
-          </div>
-          <button type="button">
-            <img src="{{asset('assets/svgs/ic-trash-can-filled.svg')}}" class="size-[30px]" alt="">
-          </button>
-        </div>
-      </div>
+
     </div>
   </section>
 
@@ -87,40 +78,40 @@
           <p class="text-base font-semibold first:font-normal">
             Sub Total
           </p>
-          <p class="text-base font-semibold first:font-normal">
-            Rp 890.000
+          <p class="text-base font-semibold first:font-normal" id="checkout-sub-total">
+
           </p>
         </li>
         <li class="flex items-center justify-between">
           <p class="text-base font-semibold first:font-normal">
             PPN 11%
           </p>
-          <p class="text-base font-semibold first:font-normal">
-            Rp 89.000
+          <p class="text-base font-semibold first:font-normal" id="checkout-ppn">
+
           </p>
         </li>
         <li class="flex items-center justify-between">
           <p class="text-base font-semibold first:font-normal">
             Insurance 23%
           </p>
-          <p class="text-base font-semibold first:font-normal">
-            Rp 120.000
+          <p class="text-base font-semibold first:font-normal" id="checkout-insurance">
+
           </p>
         </li>
         <li class="flex items-center justify-between">
           <p class="text-base font-semibold first:font-normal">
             Delivery (Promo)
           </p>
-          <p class="text-base font-semibold first:font-normal">
-            Rp 10.000
+          <p class="text-base font-semibold first:font-normal" id="checkout-delivery">
+
           </p>
         </li>
         <li class="flex items-center justify-between">
           <p class="text-base font-bold first:font-normal">
             Grand Total
           </p>
-          <p class="text-base font-bold first:font-normal text-primary">
-            Rp 3.290.000
+          <p class="text-base font-bold first:font-normal text-primary" id="checkout-grand-total">
+
           </p>
         </li>
       </ul>
@@ -160,13 +151,13 @@
         <div class="inline-flex items-center gap-2.5">
           <img src="{{asset('assets/svgs/ic-bank.svg')}}" class="size-5" alt="">
           <p class="text-base font-semibold">
-            Send Payment to
+            Bank Mandiri
           </p>
         </div>
         <div class="inline-flex items-center gap-2.5">
           <img src="{{asset('assets/svgs/ic-security-card.svg')}}" class="size-5" alt="">
           <p class="text-base font-semibold">
-            083902093092
+            1640003309582
           </p>
         </div>
       </div>
@@ -184,7 +175,9 @@
           alt="">
       </button>
     </div>
-    <form action="" method="" class="p-6 bg-white rounded-3xl" id="deliveryForm">
+    <form action="{{ route('product_transactions.store') }}" method="POST" class="p-6 bg-white rounded-3xl"
+      enctype="multipart/form-data" id="deliveryForm">
+      @csrf
       <div class="flex flex-col gap-5">
         <!-- Address -->
         <div class="flex flex-col gap-2.5">
@@ -202,13 +195,13 @@
         <!-- Post Code -->
         <div class="flex flex-col gap-2.5">
           <label for="postcode" class="text-base font-semibold">Post Code</label>
-          <input type="number" name="postcode" id="postcode__"
+          <input type="number" name="post_code" id="postcode__"
             style="background-image:url({{ asset('assets/svgs/ic-house.svg') }})" class="form-input" value="22081882">
         </div>
         <!-- Phone Number -->
         <div class="flex flex-col gap-2.5">
           <label for="phonenumber" class="text-base font-semibold">Phone Number</label>
-          <input type="number" name="phonenumber" id="phonenumber__"
+          <input type="number" name="phone_number" id="phonenumber__"
             style="background-image:url({{ asset('assets/svgs/ic-phone.svg') }})" class="form-input"
             value="602192301923">
         </div>
@@ -224,12 +217,11 @@
         <!-- Proof of Payment -->
         <div class="flex flex-col gap-2.5">
           <label for="proof_of_payment" class="text-base font-semibold">Proof of Payment</label>
-          <input type="file" name="proof_of_payment" id="proof_of_payment__"
+          <input type="file" name="proof" id="proof_of_payment__"
             style="background-image:url({{ asset('assets/svgs/ic-folder-add.svg') }})" class="form-input">
         </div>
       </div>
       </div>
-    </form>
   </section>
 
   <!-- Floating grand total -->
@@ -240,21 +232,48 @@
         <p class="text-sm text-grey mb-0.5">
           Grand Total
         </p>
-        <p class="text-lg min-[350px]:text-2xl font-bold text-white">
-          Rp 3.290.000
+        <p class="text-lg min-[350px]:text-2xl font-bold text-white" id="checkout-grand-total-price">
+
         </p>
       </div>
-      <button type="button"
-        class="inline-flex items-center justify-center px-5 py-3 text-base font-bold text-white rounded-full w-max bg-primary whitespace-nowrap"
-        onclick="window.location.href='/public/pages/success-checkout.html'">
+      <button type="submit"
+        class="inline-flex items-center justify-center px-5 py-3 text-base font-bold text-white rounded-full w-max bg-primary whitespace-nowrap">
         Confirm
       </button>
     </section>
   </div>
-
+  </form>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"
     integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
   <script src="{{asset('scripts/global.js')}}"></script>
+  <script>
+    function calculatePrice(){
+      let subTotal = 0;
+      let deliveryFee = 10000;
+      let grandTotal = 0;
+      document.querySelectorAll('.product-price').forEach(item=>{
+        subTotal+=parseFloat(item.getAttribute('data-price'))
+      })
+      const insurance = 23/100 * subTotal
+      const tax = 11/100 * subTotal
+      
+      grandTotal = tax+insurance+deliveryFee+subTotal;
+      const addPriceElement = (idElement, fee) => {
+        document.getElementById(idElement).textContent = 'Rp ' + fee.toLocaleString('id',
+        {minimumFractionDigits: 0, maximumFractionDigits: 2})
+      }
+      addPriceElement('checkout-delivery', deliveryFee);
+      addPriceElement('checkout-sub-total', subTotal);
+      addPriceElement('checkout-ppn', tax);
+      addPriceElement('checkout-insurance', insurance);
+      addPriceElement('checkout-grand-total', grandTotal);
+      addPriceElement('checkout-grand-total-price', grandTotal);
+    }
+
+    document.addEventListener('DOMContentLoaded', ()=>{
+      calculatePrice();
+    })
+  </script>
 </body>
 
 </html>

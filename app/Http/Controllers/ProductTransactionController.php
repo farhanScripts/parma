@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\TransactionDetail;
 use App\Models\ProductTransaction;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class ProductTransactionController extends Controller
 {
@@ -39,6 +41,74 @@ class ProductTransactionController extends Controller
     public function store(Request $request)
     {
         //
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'address' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'proof' => 'required|image|mimes:png,jpg,jpeg',
+            'notes' => 'required|string|max:65535',
+            'post_code' => 'required|integer',
+            'phone_number' => 'required|integer'
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // ubah semua harga menjadi satuan cents berdasarkan dollar
+            // 1 dollar = 100 cent;
+            $subTotalCents = 0;
+            $deliveryFeeCents = 10000 * 100;
+
+            $cartItems = $user->carts;
+            foreach ($cartItems as $item) {
+                $subTotalCents += $item->product->price * 100;
+            }
+            // konversi harga tax (11%) ke integer
+            $taxCents = (int)round(11 * $subTotalCents / 100);
+            // konversi harga insurance (23%) ke integer
+            $insuranceCents = (int)round(23 * $subTotalCents / 100);
+            // hitung grand total cents 
+            $grandTotalCents = $subTotalCents + $taxCents + $insuranceCents + $deliveryFeeCents;
+            // konversi dari grand total cents ke rupiah
+            $grandTotal = $grandTotalCents / 100;
+
+            // catat user id yang sedang login
+            $validated['user_id'] = $user->id;
+            $validated['total_amount'] = $grandTotal;
+            $validated['is_paid'] = false;
+
+            if ($request->hasFile('proof')) {
+                $proofPath = $request->file('proof')->store('payment_proofs', 'public');
+                $validated['proof'] = $proofPath;
+            }
+            // masukkan data ke dalam DB
+            $newTransaction = ProductTransaction::create($validated);
+
+            // simpan tiap tiap harga produk nya ke tabel Transaction Detail
+            foreach ($cartItems as $item) {
+                TransactionDetail::create([
+                    'product_transaction_id' => $newTransaction->id,
+                    'product_id' => $item->product_id,
+                    'price' => $item->product->price
+                ]);
+
+                // ketika data dari tiap barang yang dipesan udah disimpan, hapus data barang yang dipesan karena udah disimpan di DB
+                $item->delete();
+            }
+
+            DB::commit();
+
+            return redirect()->route('product_transactions.index');
+        } catch (\Exception $e) {
+            // perintah ke database kalau ada data yang ga lengkap atau cacat di rollback (jangan disimpan datanya)
+            DB::rollBack();
+            // trus kasih message ke user kalau datanya error (ada yang ga lengkap)
+            $error = ValidationException::withMessages([
+                'system_error' => ['System Error!' . $e->getMessage()]
+            ]);
+
+            throw $error;
+        }
     }
 
     /**

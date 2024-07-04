@@ -11,14 +11,13 @@
         {{-- Cek apakah ada error dari proses validasi apa tidak --}}
         @if ($errors->any())
         @foreach ($errors->all() as $error)
-        <div class="py-3 w-full rounded-3xl bg-red-500 text-white">
+        <div class="p-3 my-3 w-full rounded-3xl bg-red-500 text-white">
           {{ $error }}
         </div>
         @endforeach
         @endif
         <form method="POST" action="{{ route('admin.products.store') }}" enctype="multipart/form-data">
           @csrf
-
           <!-- Name -->
           <div>
             <x-input-label for="name" :value="__('Name')" />

@@ -16,6 +16,8 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                 </div>
+
+                @role('owner')
                 {{-- testing apakah buyer bisa mengakses route admin/products --}}
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('admin.products.index')"
@@ -27,6 +29,14 @@
                     <x-nav-link :href="route('admin.categories.index')"
                         :active="request()->routeIs('admin.categories.index')">
                         {{ __('Manage Category') }}
+                    </x-nav-link>
+                </div>
+                @endrole
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('product_transactions.index')"
+                        :active="request()->routeIs('product_transactions.index')">
+                        {{-- auth user sebagai admin atau pembeli --}}
+                        {{ Auth::user()->hasRole('owner') ? __('Apotek Orders') : __('My Transaction') }}
                     </x-nav-link>
                 </div>
             </div>

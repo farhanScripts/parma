@@ -126,7 +126,6 @@ class CategoryController extends Controller
             // bikin slug berdasarkan dari inputan name category di create.blade.php
             $validated['slug'] = Str::slug($request->name);
             // misal obat sakit -> obat-sakit
-            dd($validated);
             // simpan data category yang baru ke database categories melalui model Category
             $category->update($validated);
 

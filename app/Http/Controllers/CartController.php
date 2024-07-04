@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class CartController extends Controller
 {
@@ -12,7 +16,7 @@ class CartController extends Controller
      */
     public function index()
     {
-        //
+        return view('front.cart');
     }
 
     /**
@@ -28,7 +32,40 @@ class CartController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $productId = $request->input('product_id');
+        // dapatkan nama buyer yang sedang menambahkan barang ke cart
+        $user = Auth::user();
+        // cek apakah barang yang sebelumnya sudah pernah di masukkan ke cart apa belum
+        $existingCartItem = Cart::where('user_id', $user->id)->where('product_id', $productId)->first();
+        // jika produk sebelumnya ada, maka ke ke halaman index dari cart
+        if ($existingCartItem) {
+            return redirect()->route('carts.index');
+        }
+        // membuka koneksi ke DB
+        DB::beginTransaction();
+
+        try {
+            // mendapatkan data dari produk dan masukkan ke dalam tabel cart lalu update atau create
+            $cart = Cart::updateOrCreate([
+                'user_id' => $user->id,
+                'product_id' => $productId
+            ]);
+            // save data yang didapat ke database
+            $cart->save();
+            // commit ke DB
+            DB::commit();
+            // arahkan buyer ke halaman index dari carts
+            return redirect()->route('carts.index');
+        } catch (\Exception $e) {
+            // perintah ke database kalau ada data yang ga lengkap atau cacat di rollback (jangan disimpan datanya)
+            DB::rollBack();
+            // trus kasih message ke user kalau datanya error (ada yang ga lengkap)
+            $error = ValidationException::withMessages([
+                'system_error' => ['System Error!' . $e->getMessage()]
+            ]);
+
+            throw $error;
+        }
     }
 
     /**

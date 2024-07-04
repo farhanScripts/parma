@@ -16,7 +16,7 @@ class CartController extends Controller
      */
     public function index()
     {
-        //
+        return view('front.cart');
     }
 
     /**
@@ -30,8 +30,9 @@ class CartController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store($productId)
+    public function store(Request $request)
     {
+        $productId = $request->input('product_id');
         // dapatkan nama buyer yang sedang menambahkan barang ke cart
         $user = Auth::user();
         // cek apakah barang yang sebelumnya sudah pernah di masukkan ke cart apa belum

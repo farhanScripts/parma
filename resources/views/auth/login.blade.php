@@ -40,7 +40,7 @@
                 </button>
             </div>
         </form>
-        <a href="./register.html" class="font-semibold text-base mt-[30px] underline">
+        <a href="{{ route('register') }}" class="font-semibold text-base mt-[30px] underline">
             Create New Account
         </a>
     </div>

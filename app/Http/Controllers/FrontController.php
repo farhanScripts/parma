@@ -25,4 +25,16 @@ class FrontController extends Controller
             'product' => $product
         ]);
     }
+
+    public function search(Request $request)
+    {
+        // dapatkan kata kunci untuk keyword yang udah di input pengguna dalam search bar di index
+        $kata_kunci = $request->input('keyword');
+        // ambil data dari DB Product yang mengandung kata kunci yang sudah di input sama pengguna
+        $products = Product::where('name', 'LIKE', '%' . $kata_kunci . '%')->get();
+        return view('front.search', [
+            'products' => $products,
+            'keyword' => $kata_kunci
+        ]);
+    }
 }

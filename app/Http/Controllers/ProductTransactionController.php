@@ -58,9 +58,10 @@ class ProductTransactionController extends Controller
             // 1 dollar = 100 cent;
             $subTotalCents = 0;
             $deliveryFeeCents = 10000 * 100;
-
+            // dapatkan barang-barang yang sedang ada di carts
             $cartItems = $user->carts;
             foreach ($cartItems as $item) {
+                // ambil harga product nya karena carts sudah mempunyai relasi ke product
                 $subTotalCents += $item->product->price * 100;
             }
             // konversi harga tax (11%) ke integer

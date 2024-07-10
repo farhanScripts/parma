@@ -12,16 +12,18 @@
       <div class="bg-white overflow-hidden gap-y-5 p-10 shadow-sm sm:rounded-lg">
         @forelse ($product_transactions as $transaction)
         <div class="item-card flex p-3 flex-row justify-between items-center">
-          <div class="flex flex-row gap-x-3 items-center">
-            <div>
-              <p class="text-base font-bold">Total Transaksi</p>
-              <h3 class="font-bold text-xl text-blue-500">
-                Rp {{ $transaction->total_amount }}
-              </h3>
+          <a href="{{ route('product_transactions.show', $transaction) }}" class="font-bold py-3 px-5 ">
+            <div class="flex flex-row gap-x-3 items-center">
+              <div>
+                <p class="text-base font-bold">Total Transaksi</p>
+                <h3 class="font-bold text-xl text-blue-500">
+                  Rp {{ $transaction->total_amount }}
+                </h3>
+              </div>
             </div>
-          </div>
+          </a>
 
-          <div>
+          <div class="hidden md:flex flex-col">
             <p class="text-base font-bold">Date</p>
             <h3 class="font-bold text-xl text-blue-500">
               {{ $transaction->created_at ? $transaction->created_at : date('Y-m-d') }}
@@ -40,7 +42,7 @@
             </p>
           </span>
           @endif
-          <div class="flex flex-row gap-x-3 items-center">
+          <div class="hidden md:flex flex-row gap-x-3 items-center">
             <a href="{{ route('product_transactions.show', $transaction) }}"
               class="font-bold py-3 px-5 rounded-full text-white bg-indigo-700">View Details</a>
           </div>

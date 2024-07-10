@@ -12,7 +12,7 @@
     <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
       <div class="bg-white overflow-hidden gap-y-5 p-10 shadow-sm sm:rounded-lg">
 
-        <div class="item-card flex p-3 flex-row justify-between items-center">
+        <div class="item-card flex flex-col gap-y-3 md:flex-row justify-between md:items-center">
           <div class="flex flex-row gap-x-3 items-center">
             <div>
               <p class="text-base font-bold">Total Transaksi</p>
@@ -30,13 +30,13 @@
           </div>
 
           @if ($product_transaction->is_paid)
-          <span class="font-bold py-1 px-3 rounded-full bg-green-500">
+          <span class="font-bold py-1 px-3 w-fit rounded-full bg-green-500">
             <p class="text-white font-bold text-sm">
               SUCCESS
             </p>
           </span>
           @else
-          <span class="font-bold py-1 px-3 rounded-full bg-orange-500">
+          <span class="font-bold py-1 px-3  w-fit rounded-full bg-orange-500">
             <p class="text-white font-bold text-sm">
               PENDING
             </p>
@@ -50,7 +50,7 @@
         <h3 class="font-bold text-xl">
           List of Items
         </h3>
-        <div class="grid grid-cols-4 gap-x-10">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-x-10">
           <div class="flex flex-col gap-y-5 col-span-2">
             @forelse ($product_transaction->transactionDetails as $details)
             <div class="item-card flex p-3 flex-row justify-between items-center">

@@ -37,4 +37,15 @@ class FrontController extends Controller
             'keyword' => $kata_kunci
         ]);
     }
+
+    public function category(Category $category)
+    {
+        // ambil sejumlah produk berdasarkan dari kategori
+        $products = Product::where('category_id', $category->id)->with('category')->get();
+
+        return view('front.category', [
+            'products' => $products,
+            'category' => $category
+        ]);
+    }
 }

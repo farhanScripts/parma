@@ -14,6 +14,9 @@ Route::get('/', [FrontController::class, 'index'])->name('front.index');
 Route::get('/search', [FrontController::class, 'search'])->name('front.search');
 // setting route untuk melihat detail halaman dengan slug product
 Route::get('/details/{product:slug}', [FrontController::class, 'details'])->name('front.product.details');
+// setting route untuk melihat produk berdasarkan kategori
+Route::get('/category/{category}', [FrontController::class, 'category'])->name('front.product.category');
+
 
 Route::get('/dashboard', function () {
     return view('dashboard');
